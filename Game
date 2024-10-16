@@ -1,0 +1,111 @@
+#include <iostream>
+#include <ctime>
+
+using namespace std;
+
+void drawBoard(char* space);
+void playerMove(char* space, char player);
+void computerMove(char* spaces, char computer);
+bool winChecker(char* spaces, char player);
+bool tieChecker(char* spaces);
+
+int main() {
+    char spaces[9] = {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}; 
+    char player = 'X';
+    char comp = 'O';
+    bool program = true;
+
+    drawBoard(spaces);
+
+    while (program) {
+        playerMove(spaces, player);
+        drawBoard(spaces);
+        
+        if (winChecker(spaces, player)) {
+            cout << "YOU WIN!\n";
+            break;
+        }
+        if (tieChecker(spaces)) {
+            break;
+        }
+
+        computerMove(spaces, comp);
+        drawBoard(spaces);
+        
+        if (winChecker(spaces, comp)) {
+            cout << "YOU LOSE!\n";
+            break;
+        }
+        if (tieChecker(spaces)) {
+            break;
+        }
+    }
+
+    cout << "Thanks for playing!" << endl;
+    return 0;
+}
+
+void drawBoard(char* space) {
+    cout << "     |     |     " << endl;
+    cout << "  " << space[0] << "  |  " << space[1] << "  |  " << space[2] << "   " << endl;
+    cout << "_____|_____|_____" << endl;
+    cout << "     |     |     " << endl;
+    cout << "  " << space[3] << "  |  " << space[4] << "  |  " << space[5] << "   " << endl;
+    cout << "_____|_____|_____" << endl;
+    cout << "     |     |     " << endl;
+    cout << "  " << space[6] << "  |  " << space[7] << "  |  " << space[8] << "   " << endl;
+    cout << "     |     |     " << endl;
+}
+
+void playerMove(char* space, char player) {
+    int number;
+
+    cout << "Please enter a space (1-9): " << endl;
+    cin >> number;
+
+    while (number < 1 || number > 9 || space[number - 1] != ' ') {
+        cout << "Entered wrong parameters, please enter a valid space (1-9): " << endl;
+        cin >> number;
+    }
+
+    space[number - 1] = player;  // Correct assignment
+}
+
+void computerMove(char* spaces, char computer) {
+    int number;
+    srand(static_cast<unsigned int>(time(0)));
+
+    while (true) {
+        number = rand() % 9;
+        if (spaces[number] == ' ') {
+            spaces[number] = computer;
+            break;
+        }
+    }
+}
+
+bool winChecker(char* spaces, char player) {
+    // Check rows, columns, and diagonals for a win
+    for (int i = 0; i < 3; i++) {
+        if (spaces[i * 3] == player && spaces[i * 3 + 1] == player && spaces[i * 3 + 2] == player)
+            return true;
+        if (spaces[i] == player && spaces[i + 3] == player && spaces[i + 6] == player)
+            return true;
+    }
+    if (spaces[0] == player && spaces[4] == player && spaces[8] == player)
+        return true;
+    if (spaces[2] == player && spaces[4] == player && spaces[6] == player)
+        return true;
+
+    return false;
+}
+
+bool tieChecker(char* spaces) {
+    for (int i = 0; i < 9; i++) {
+        if (spaces[i] == ' ') {
+            return false;
+        }
+    }
+    cout << "IT'S A TIE!\n";
+    return true;
+}
